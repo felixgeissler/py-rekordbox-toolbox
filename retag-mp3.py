@@ -3,24 +3,34 @@
 import os
 import sys
 import re
+import csv
 import eyed3
+from datetime import datetime
 
 def main():
   for arg in sys.argv[1:]:
     basepath = arg
-    print("Processing files in directory: \"%s\"" % (basepath))
-    print("================================")
-    for fname in os.listdir(basepath):
-      # ITERATING OVER DIRECTORY CONTENT
-      fpath=os.path.join(basepath, fname)
-      if not os.path.isdir(fpath) and not fname.startswith('.') and fname.endswith('.mp3'):
-        # ITERATING OVER MP3s
-        audiofile = eyed3.load(fpath)
-        artist, title = getFormatedTags(audiofile)
-        audiofile.tag.artist = artist
-        audiofile.tag.title = title
-        audiofile.tag.save()
-        print("Successfully tagged: {}".format(fname))
+    logfilename = 'log_retag_' + datetime.now().strftime("%Y_%m_%d_%H%M%S")
+    if not os.path.exists('logs'):
+      os.makedirs('logs')
+    with open('logs/{}.csv'.format(logfilename), 'w', newline='') as logfile:
+      writer = csv.writer(logfile)
+      writer.writerow(["oldArtist", "newArtist", "oldTitle", "newTitle", "dirty", "file"])
+      print("Processing files in directory: \"%s\"" % (basepath))
+      print("================================")
+      for fname in os.listdir(basepath):
+        # ITERATING OVER DIRECTORY CONTENT
+        fpath=os.path.join(basepath, fname)
+        if not os.path.isdir(fpath) and not fname.startswith('.') and fname.endswith('.mp3'):
+          # ITERATING OVER MP3s
+          audiofile = eyed3.load(fpath)
+          artist, title = getFormatedTags(audiofile)
+          isDirty = (audiofile.tag.artist != artist)|(audiofile.tag.title != title)
+          writer.writerow([audiofile.tag.artist, artist, audiofile.tag.title, title, isDirty, fpath])
+          audiofile.tag.artist = artist
+          audiofile.tag.title = title
+          audiofile.tag.save()
+          print("Successfully tagged: {}".format(fname))
 
 def getFormatedTags(af):
   if hasattr(af, 'tag'):
