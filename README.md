@@ -5,7 +5,19 @@ tagged as 'Front' cover. Therefor this hacky Python script will fix this issue b
 
 * Related Rekordbox version: 5.8.5
 
-## Dependencys
+## Getting started (OSX)
+
+Install Python 3
+```
+brew install python3
+```
+
+Install eyeD3
+```
+pip3 install eyeD3
+```
+
+## Dependencies
 
 * Python 3.7
-* FFMPEG / FFPROBE
+* eyeD3
