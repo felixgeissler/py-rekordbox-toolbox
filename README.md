@@ -17,6 +17,11 @@ Install eyeD3
 pip3 install eyeD3
 ```
 
+Perform tag formatting on your library
+```
+python3 retag-mp3.py /path/to/your/library
+```
+
 ## Dependencies
 
 * Python 3.7
